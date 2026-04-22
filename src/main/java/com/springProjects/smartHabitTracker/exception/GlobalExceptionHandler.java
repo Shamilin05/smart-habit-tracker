@@ -19,4 +19,10 @@ public class GlobalExceptionHandler {
     public String handleHabitExists(HabitAlreadyExistsException ex){
         return ex.getMessage();
     }
+
+    @ExceptionHandler(HabitAlreadyCompletedException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public String handleDuplicateTaskCompletion(HabitAlreadyCompletedException ex){
+        return ex.getMessage();
+    }
 }
