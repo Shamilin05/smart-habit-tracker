@@ -3,6 +3,7 @@ package com.springProjects.smartHabitTracker.service;
 import com.springProjects.smartHabitTracker.entity.Habit;
 import com.springProjects.smartHabitTracker.entity.User;
 import com.springProjects.smartHabitTracker.exception.HabitAlreadyExistsException;
+import com.springProjects.smartHabitTracker.exception.HabitNotFoundException;
 import com.springProjects.smartHabitTracker.exception.UserNotFoundException;
 import com.springProjects.smartHabitTracker.repository.HabitRepository;
 import com.springProjects.smartHabitTracker.repository.UserRepository;
@@ -42,7 +43,7 @@ public class HabitService {
     }
 
     public void removeHabit(Long habitId){
-        Habit target = habitRepository.findById(habitId).orElseThrow(() -> new UserNotFoundException("Habit not found"));
+        Habit target = habitRepository.findById(habitId).orElseThrow(() -> new HabitNotFoundException("Habit not found"));
         habitRepository.delete(target);
     }
 }

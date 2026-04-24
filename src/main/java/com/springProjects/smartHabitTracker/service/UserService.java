@@ -36,7 +36,7 @@ public class UserService {
     }
 
     public void deleteUser(long id){
-        User target = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User does not exist!"));
+        User target = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User does not exist!"));
         userRepository.delete(target);
     }
 }

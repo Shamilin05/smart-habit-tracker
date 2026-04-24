@@ -3,7 +3,7 @@ package com.springProjects.smartHabitTracker.service;
 import com.springProjects.smartHabitTracker.entity.Habit;
 import com.springProjects.smartHabitTracker.entity.HabitCompletion;
 import com.springProjects.smartHabitTracker.exception.HabitAlreadyCompletedException;
-import com.springProjects.smartHabitTracker.exception.UserNotFoundException;
+import com.springProjects.smartHabitTracker.exception.HabitNotFoundException;
 import com.springProjects.smartHabitTracker.repository.HabitCompletionRepository;
 import com.springProjects.smartHabitTracker.repository.HabitRepository;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -26,7 +26,7 @@ public class HabitCompletionService {
     public void markTaskAsComplete(Long habitId){
         HabitCompletion habitCompletion = new HabitCompletion();
         habitCompletion.setDate(LocalDate.now());
-        Habit target = habitRepository.findById(habitId).orElseThrow(() -> new UserNotFoundException("Habit does not exist!"));
+        Habit target = habitRepository.findById(habitId).orElseThrow(() -> new HabitNotFoundException("Habit does not exist!"));
         habitCompletion.setHabit(target);
         if (habitCompletionRepository.existsByHabitAndDate(habitCompletion.getHabit(), habitCompletion.getDate())){
             throw new HabitAlreadyCompletedException("This task has already been marked completed for today!");
@@ -39,7 +39,23 @@ public class HabitCompletionService {
     }
 
     public List<HabitCompletion> getTaskCompletionHistory(Long habitId){
-        Habit target = habitRepository.findById(habitId).orElseThrow(() -> new UserNotFoundException("Habit does not exist"));
+        Habit target = habitRepository.findById(habitId).orElseThrow(() -> new HabitNotFoundException("Habit does not exist"));
         return habitCompletionRepository.findByHabitId(habitId);
+    }
+
+    public int calculateStreak(Long habitId){
+        int streak = 0;
+        List<HabitCompletion> completedDates = habitCompletionRepository.findByHabitIdOrderByDateDesc(habitId);
+        LocalDate current = LocalDate.now();
+        for(int i=0; i< completedDates.size(); i++){
+            if(completedDates.get(i).getDate().equals(current)){
+                streak++;
+                current = current.minusDays(1);
+            }
+            else{
+                break;
+            }
+        }
+        return streak;
     }
 }

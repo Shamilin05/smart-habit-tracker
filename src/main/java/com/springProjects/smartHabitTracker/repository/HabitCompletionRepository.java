@@ -12,4 +12,6 @@ public interface HabitCompletionRepository extends JpaRepository<HabitCompletion
     boolean existsByHabitAndDate(Habit habit, LocalDate date);
 
     List<HabitCompletion> findByHabitId(Long habitId);
+
+    List<HabitCompletion> findByHabitIdOrderByDateDesc(Long habitId);
 }

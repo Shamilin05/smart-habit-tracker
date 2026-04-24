@@ -14,6 +14,12 @@ public class GlobalExceptionHandler {
         return ex.getMessage();
     }
 
+    @ExceptionHandler(HabitNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleHabitNotFound(HabitNotFoundException ex){
+        return ex.getMessage();
+    }
+
     @ExceptionHandler(HabitAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public String handleHabitExists(HabitAlreadyExistsException ex){

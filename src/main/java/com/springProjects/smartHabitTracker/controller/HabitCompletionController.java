@@ -1,6 +1,5 @@
 package com.springProjects.smartHabitTracker.controller;
 
-import com.springProjects.smartHabitTracker.entity.Habit;
 import com.springProjects.smartHabitTracker.entity.HabitCompletion;
 import com.springProjects.smartHabitTracker.service.HabitCompletionService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +24,13 @@ public class HabitCompletionController {
         return "Well done on completing the task!";
     }
 
-    @GetMapping("habits/{habitId}/completions")
+    @GetMapping("/habits/{habitId}/completions")
     public List<HabitCompletion> getCompletionHistory(@PathVariable Long habitId){
         return habitCompletionService.getTaskCompletionHistory(habitId);
+    }
+
+    @GetMapping("/habits/{habitId}/streak")
+    public int getStreak(@PathVariable Long habitId){
+        return habitCompletionService.calculateStreak(habitId);
     }
 }
