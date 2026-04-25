@@ -4,6 +4,7 @@ import com.springProjects.smartHabitTracker.entity.Habit;
 import com.springProjects.smartHabitTracker.entity.HabitCompletion;
 import com.springProjects.smartHabitTracker.exception.HabitAlreadyCompletedException;
 import com.springProjects.smartHabitTracker.exception.HabitNotFoundException;
+import com.springProjects.smartHabitTracker.exception.InvalidAccessException;
 import com.springProjects.smartHabitTracker.repository.HabitCompletionRepository;
 import com.springProjects.smartHabitTracker.repository.HabitRepository;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -17,20 +18,23 @@ public class HabitCompletionService {
 
     private final HabitCompletionRepository habitCompletionRepository;
     private final HabitRepository habitRepository;
+    private final HabitService habitService;
 
-    public HabitCompletionService (HabitCompletionRepository habitCompletionRepository, HabitRepository habitRepository){
+    public HabitCompletionService (HabitCompletionRepository habitCompletionRepository, HabitRepository habitRepository, HabitService habitService){
         this.habitCompletionRepository = habitCompletionRepository;
         this.habitRepository = habitRepository;
+        this.habitService = habitService;
     }
 
-    public void markTaskAsComplete(Long habitId){
-        HabitCompletion habitCompletion = new HabitCompletion();
-        habitCompletion.setDate(LocalDate.now());
-        Habit target = habitRepository.findById(habitId).orElseThrow(() -> new HabitNotFoundException("Habit does not exist!"));
-        habitCompletion.setHabit(target);
-        if (habitCompletionRepository.existsByHabitAndDate(habitCompletion.getHabit(), habitCompletion.getDate())){
+    public void markTaskAsComplete(Long habitId, Long userId){
+        Habit target = habitService.getAuthorizedHabit(habitId, userId);
+        LocalDate today = LocalDate.now();
+        if (habitCompletionRepository.existsByHabitAndDate(target, today)){
             throw new HabitAlreadyCompletedException("This task has already been marked completed for today!");
         }
+        HabitCompletion habitCompletion = new HabitCompletion();
+        habitCompletion.setDate(today);
+        habitCompletion.setHabit(target);
         try {
             habitCompletionRepository.save(habitCompletion);
         } catch (DataIntegrityViolationException ex) {
@@ -38,12 +42,13 @@ public class HabitCompletionService {
         }
     }
 
-    public List<HabitCompletion> getTaskCompletionHistory(Long habitId){
-        Habit target = habitRepository.findById(habitId).orElseThrow(() -> new HabitNotFoundException("Habit does not exist"));
+    public List<HabitCompletion> getTaskCompletionHistory(Long habitId, Long userId){
+        Habit target = habitService.getAuthorizedHabit(habitId, userId);
         return habitCompletionRepository.findByHabitId(habitId);
     }
 
-    public int calculateStreak(Long habitId){
+    public int calculateStreak(Long habitId, Long userId){
+        Habit target = habitService.getAuthorizedHabit(habitId, userId);
         int streak = 0;
         List<HabitCompletion> completedDates = habitCompletionRepository.findByHabitIdOrderByDateDesc(habitId);
         LocalDate current = LocalDate.now();

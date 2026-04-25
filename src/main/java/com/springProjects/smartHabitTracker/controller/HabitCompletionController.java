@@ -2,10 +2,7 @@ package com.springProjects.smartHabitTracker.controller;
 
 import com.springProjects.smartHabitTracker.entity.HabitCompletion;
 import com.springProjects.smartHabitTracker.service.HabitCompletionService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,18 +16,18 @@ public class HabitCompletionController {
     }
 
     @PostMapping("/habits/{habitId}/complete")
-    public String markAsComplete(@PathVariable Long habitId){
-        habitCompletionService.markTaskAsComplete(habitId);
+    public String markAsComplete(@PathVariable Long habitId, @RequestHeader Long userId){
+        habitCompletionService.markTaskAsComplete(habitId, userId);
         return "Well done on completing the task!";
     }
 
     @GetMapping("/habits/{habitId}/completions")
-    public List<HabitCompletion> getCompletionHistory(@PathVariable Long habitId){
-        return habitCompletionService.getTaskCompletionHistory(habitId);
+    public List<HabitCompletion> getCompletionHistory(@PathVariable Long habitId, @RequestHeader Long userId){
+        return habitCompletionService.getTaskCompletionHistory(habitId, userId);
     }
 
     @GetMapping("/habits/{habitId}/streak")
-    public int getStreak(@PathVariable Long habitId){
-        return habitCompletionService.calculateStreak(habitId);
+    public int getStreak(@PathVariable Long habitId, @RequestHeader Long userId){
+        return habitCompletionService.calculateStreak(habitId, userId);
     }
 }

@@ -31,4 +31,10 @@ public class GlobalExceptionHandler {
     public String handleDuplicateTaskCompletion(HabitAlreadyCompletedException ex){
         return ex.getMessage();
     }
+
+    @ExceptionHandler(InvalidAccessException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String handleInvalidUserAccess(InvalidAccessException ex){
+        return ex.getMessage();
+    }
 }

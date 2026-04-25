@@ -16,18 +16,18 @@ public class HabitController {
     }
 
     @PostMapping("/users/{userId}/habits")
-    public Habit createHabit(@PathVariable Long userId, @RequestBody Habit habit){
-        return habitService.createHabit(userId, habit);
+    public Habit createHabit(@PathVariable Long userId, @RequestBody Habit habit, @RequestHeader("userId") Long uId){
+        return habitService.createHabit(userId, habit, uId);
     }
 
     @GetMapping("/users/{userId}/habits")
-    public List<Habit> getHabits(@PathVariable Long userId){
-        return habitService.getHabits(userId);
+    public List<Habit> getHabits(@PathVariable Long userId, @RequestHeader("userId") Long uId){
+        return habitService.getHabits(userId, uId);
     }
 
     @DeleteMapping("/habit/{habitId}")
-    public String deleteHabit(@PathVariable Long habitId){
-        habitService.removeHabit(habitId);
+    public String deleteHabit(@PathVariable Long habitId, @RequestHeader("userId") Long uId){
+        habitService.removeHabit(habitId, uId);
         return "Habit deleted successfully";
     }
 }

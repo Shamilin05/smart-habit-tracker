@@ -12,7 +12,7 @@ public class Habit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String name;
     private String description;
@@ -32,11 +32,11 @@ public class Habit {
         return name;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
